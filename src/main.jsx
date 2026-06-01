@@ -1,9 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   BadgeCheck,
   CircleDollarSign,
   FileDown,
+  Download,
   Fingerprint,
   History,
   Link,
@@ -37,6 +38,8 @@ function App() {
   const [contributors, setContributors] = useState(initialContributors);
   const [tapCount, setTapCount] = useState(4);
   const [selectedRole, setSelectedRole] = useState("Songwriter");
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   const totalSplit = useMemo(
     () => contributors.reduce((sum, person) => sum + person.split, 0),
@@ -44,6 +47,34 @@ function App() {
   );
 
   const allConfirmed = contributors.every((person) => person.status === "confirmed");
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+
+    const standalone =
+      window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
+    setIsInstalled(Boolean(standalone));
+
+    function handleBeforeInstallPrompt(event) {
+      event.preventDefault();
+      setInstallPrompt(event);
+    }
+
+    function handleInstalled() {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    }
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleInstalled);
+    };
+  }, []);
 
   function simulateTap() {
     const newPerson = {
@@ -65,8 +96,29 @@ function App() {
     );
   }
 
+  async function installApp() {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const result = await installPrompt.userChoice;
+    if (result.outcome === "accepted") {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    }
+  }
+
   return (
     <main className="app-shell">
+      <div className="app-install-bar">
+        <div>
+          <strong>Sync app</strong>
+          <span>{isInstalled ? "Installed workspace" : "Installable phone-first demo"}</span>
+        </div>
+        <button onClick={installApp} disabled={!installPrompt || isInstalled}>
+          <Download size={16} />
+          {isInstalled ? "Installed" : "Install app"}
+        </button>
+      </div>
+
       <section className="hero">
         <div className="hero-copy">
           <div className="brand-mark">
