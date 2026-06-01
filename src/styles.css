@@ -379,6 +379,48 @@ footer {
   margin: 24px 0;
 }
 
+.registration-checklist {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.status-step {
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border: 1px solid rgba(21, 37, 28, 0.12);
+  border-radius: 8px;
+  background: #fff8f2;
+  color: #5f332c;
+  font-size: 0.86rem;
+  font-weight: 900;
+}
+
+.status-step span {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #d63f3f;
+  color: #fff8f2;
+}
+
+.status-step.done {
+  background: #e7f5de;
+  color: #24502d;
+}
+
+.status-step.done span {
+  background: #24502d;
+  color: #e7f5de;
+}
+
 .info-item {
   min-height: 84px;
   padding: 14px;
@@ -486,6 +528,33 @@ footer {
   color: #59655e;
 }
 
+.profile-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.field-chip {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 0 9px;
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.field-chip.complete {
+  background: #e7f5de;
+  color: #24502d;
+}
+
+.field-chip.missing {
+  background: #fff0e8;
+  color: #9b2f28;
+}
+
 .split-pill {
   min-width: 58px;
   min-height: 36px;
@@ -588,6 +657,7 @@ footer {
 
   .metric-band,
   .session-grid,
+  .registration-checklist,
   .contributor-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -625,6 +695,7 @@ footer {
 
   .metric-band,
   .session-grid,
+  .registration-checklist,
   .contributor-grid,
   .qr-panel {
     grid-template-columns: 1fr;

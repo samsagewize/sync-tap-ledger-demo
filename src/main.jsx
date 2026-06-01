@@ -20,18 +20,58 @@ import {
 import "./styles.css";
 
 const initialContributors = [
-  { name: "Sam Sage", role: "Producer", split: 35, status: "confirmed", device: "iPhone 15" },
-  { name: "Maya Lux", role: "Writer", split: 25, status: "confirmed", device: "Pixel 9" },
-  { name: "Tone Wells", role: "Vocalist", split: 25, status: "pending", device: "Galaxy S25" },
-  { name: "Iris Vale", role: "Engineer", split: 15, status: "confirmed", device: "iPhone 14" }
+  {
+    name: "Sam Sage",
+    role: "Producer",
+    split: 35,
+    status: "confirmed",
+    device: "iPhone 15",
+    pro: "BMI",
+    ipi: "00342190872",
+    publisher: "Sage Signal Music",
+    publisherIpi: "00884112019"
+  },
+  {
+    name: "Maya Lux",
+    role: "Writer",
+    split: 25,
+    status: "confirmed",
+    device: "Pixel 9",
+    pro: "ASCAP",
+    ipi: "00630218841",
+    publisher: "Self-published",
+    publisherIpi: "Not assigned"
+  },
+  {
+    name: "Tone Wells",
+    role: "Vocalist",
+    split: 25,
+    status: "pending",
+    device: "Galaxy S25",
+    pro: "BMI",
+    ipi: "",
+    publisher: "",
+    publisherIpi: ""
+  },
+  {
+    name: "Iris Vale",
+    role: "Engineer",
+    split: 15,
+    status: "confirmed",
+    device: "iPhone 14",
+    pro: "ASCAP",
+    ipi: "00491822016",
+    publisher: "Vale Room Admin",
+    publisherIpi: "00774199002"
+  }
 ];
 
 const ledgerBase = [
-  { time: "10:08 PM", event: "Session opened", detail: "Midnight Signal record created by Sam Sage" },
-  { time: "10:11 PM", event: "Tap accepted", detail: "Maya Lux joined through NFC tap-in" },
-  { time: "10:18 PM", event: "Credit added", detail: "Tone Wells added as vocalist and writer" },
-  { time: "10:29 PM", event: "Split draft", detail: "Revenue shares total 100% across four collaborators" },
-  { time: "10:34 PM", event: "Proof attached", detail: "Voice memo, rough bounce, and studio location linked" }
+  { time: "10:08 PM", event: "Room opened", detail: "Sam created a registration room for Midnight Signal" },
+  { time: "10:11 PM", event: "Invite accepted", detail: "Maya joined through the studio QR link" },
+  { time: "10:18 PM", event: "Rights profile requested", detail: "Tone needs IPI/CAE and publisher info before registration" },
+  { time: "10:29 PM", event: "Splits drafted", detail: "Writer ownership totals 100% across four collaborators" },
+  { time: "10:34 PM", event: "Proof attached", detail: "Bounce, voice memo, and room timestamp linked to the record" }
 ];
 
 function App() {
@@ -46,7 +86,13 @@ function App() {
     [contributors]
   );
 
+  const completedProfiles = useMemo(
+    () => contributors.filter((person) => hasRegistrationProfile(person)).length,
+    [contributors]
+  );
+  const missingProfiles = contributors.length - completedProfiles;
   const allConfirmed = contributors.every((person) => person.status === "confirmed");
+  const registrationReady = totalSplit === 100 && allConfirmed && missingProfiles === 0;
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
@@ -82,7 +128,11 @@ function App() {
       role: selectedRole,
       split: 0,
       status: "pending",
-      device: tapCount % 2 ? "iPhone" : "Android"
+      device: tapCount % 2 ? "iPhone" : "Android",
+      pro: "Choose PRO",
+      ipi: "",
+      publisher: "",
+      publisherIpi: ""
     };
     setTapCount((count) => count + 1);
     setContributors((people) => [...people, newPerson]);
@@ -91,7 +141,15 @@ function App() {
   function confirmPerson(index) {
     setContributors((people) =>
       people.map((person, personIndex) =>
-        personIndex === index ? { ...person, status: "confirmed" } : person
+        personIndex === index
+          ? {
+              ...person,
+              status: "confirmed",
+              pro: person.pro === "Choose PRO" ? "BMI" : person.pro,
+              ipi: person.ipi || "Needs real IPI",
+              publisher: person.publisher || "Needs publisher choice"
+            }
+          : person
       )
     );
   }
@@ -125,34 +183,35 @@ function App() {
             <span><Nfc size={18} /></span>
             Sync
           </div>
-          <h1>Tap in, register the record, leave with the ledger.</h1>
+          <h1>Tap into the room. Leave ready to register with BMI or ASCAP.</h1>
           <p>
-            Sync helps musicians capture credits, splits, approvals, and proof while the song is
-            still being made. No paperwork pileup, no mystery ownership, no lost contributors.
+            Sync turns the messy song-registration chase into a shared app room. Invite every
+            writer, collect PRO details, verify IPI/CAE and publisher info, approve splits, then
+            hand off a clean registration packet.
           </p>
           <div className="hero-actions">
-            <a href="#demo" className="primary-action"><Smartphone size={18} /> Try demo flow</a>
-            <a href="#ledger" className="secondary-action"><History size={18} /> View ledger</a>
+            <a href="#demo" className="primary-action"><Smartphone size={18} /> Try room flow</a>
+            <a href="#ledger" className="secondary-action"><History size={18} /> View audit trail</a>
           </div>
         </div>
-        <div className="phone-stage" aria-label="Sync mobile session preview">
+        <div className="phone-stage" aria-label="Sync mobile registration room preview">
           <div className="tap-ring ring-one" />
           <div className="tap-ring ring-two" />
           <div className="phone-mock">
             <div className="phone-top" />
             <div className="phone-screen">
               <div className="session-card">
-                <span className="tiny-label">Live session</span>
+                <span className="tiny-label">Registration room</span>
                 <strong>Midnight Signal</strong>
-                <small>Tap to join credits</small>
+                <small>Join and complete your rights profile</small>
               </div>
               <div className="nfc-zone">
                 <Nfc size={46} />
               </div>
               <div className="mini-ledger">
-                <span><BadgeCheck size={14} /> 3 approved</span>
-                <span><UsersRound size={14} /> 4 contributors</span>
-                <span><ShieldCheck size={14} /> audit ready</span>
+                <span><BadgeCheck size={14} /> {completedProfiles} profiles ready</span>
+                <span><UsersRound size={14} /> {contributors.length} writers invited</span>
+                <span><ShieldCheck size={14} /> {missingProfiles} missing profiles</span>
               </div>
             </div>
           </div>
@@ -160,27 +219,33 @@ function App() {
       </section>
 
       <section className="metric-band" aria-label="Sync value summary">
-        <Metric icon={<Fingerprint />} label="Tap-in identity" value="NFC + QR fallback" />
+        <Metric icon={<Fingerprint />} label="Invite room" value="QR + app install" />
+        <Metric icon={<WalletCards />} label="Rights profiles" value={`${completedProfiles}/${contributors.length} complete`} />
         <Metric icon={<CircleDollarSign />} label="Splits tracked" value={`${totalSplit}% allocated`} />
-        <Metric icon={<ShieldCheck />} label="Transparency" value="Event-level ledger" />
-        <Metric icon={<FileDown />} label="Exports" value="Label-ready packet" />
+        <Metric icon={<FileDown />} label="PRO packet" value={registrationReady ? "Ready" : "Needs review"} />
       </section>
 
       <section className="workspace" id="demo">
         <div className="panel session-panel">
           <div className="section-heading">
-            <span>Demo session</span>
+            <span>Registration room</span>
             <h2>Midnight Signal</h2>
           </div>
           <div className="session-grid">
             <InfoItem label="Artist" value="Sam Sage" />
-            <InfoItem label="Room" value="North Loop Studio B" />
-            <InfoItem label="Record ID" value="SYNC-0626-8841" />
-            <InfoItem label="Status" value={allConfirmed ? "Ready to export" : "Awaiting approvals"} />
+            <InfoItem label="Work type" value="Original song" />
+            <InfoItem label="PRO target" value="BMI / ASCAP" />
+            <InfoItem label="Status" value={registrationReady ? "Ready to register" : "Collecting info"} />
+          </div>
+          <div className="registration-checklist" aria-label="Registration readiness">
+            <StatusStep done label="Song title and artist" />
+            <StatusStep done={totalSplit === 100} label="Writer shares total 100%" />
+            <StatusStep done={missingProfiles === 0} label="IPI/CAE and publisher info" />
+            <StatusStep done={allConfirmed} label="All contributors approved" />
           </div>
           <div className="tap-console">
             <div>
-              <span className="tiny-label">Tap-in role</span>
+              <span className="tiny-label">Invite role</span>
               <div className="role-picker" role="group" aria-label="Role picker">
                 {["Songwriter", "Producer", "Vocalist"].map((role) => (
                   <button
@@ -195,7 +260,7 @@ function App() {
             </div>
             <button className="tap-button" onClick={simulateTap}>
               <Nfc size={20} />
-              Simulate phone tap
+              Invite phone to room
             </button>
           </div>
         </div>
@@ -205,18 +270,18 @@ function App() {
             <QrCode size={92} />
           </div>
           <div>
-            <span className="tiny-label">Fallback invite</span>
-            <h2>Scan if NFC is unavailable</h2>
-            <p>Every invite resolves to the same session record, identity prompt, and approval trail.</p>
-            <button className="text-button"><Link size={17} /> Copy secure link</button>
+            <span className="tiny-label">Room invite</span>
+            <h2>Scan, install, fill your rights profile</h2>
+            <p>Each writer lands in the same room and adds legal name, PRO, IPI/CAE, publisher info, and approved split.</p>
+            <button className="text-button"><Link size={17} /> Copy room link</button>
           </div>
         </div>
       </section>
 
       <section className="contributors">
         <div className="section-heading">
-          <span>Credits and splits</span>
-          <h2>Everyone can see the same record</h2>
+          <span>Registration profiles</span>
+          <h2>Collect the exact info that slows down BMI and ASCAP registration</h2>
         </div>
         <div className="contributor-grid">
           {contributors.map((person, index) => (
@@ -224,14 +289,22 @@ function App() {
               <div className="avatar">{person.name.slice(0, 2).toUpperCase()}</div>
               <div className="person-details">
                 <h3>{person.name}</h3>
-                <p>{person.role} · {person.device}</p>
+                <p>{person.role} · {person.pro} · {person.device}</p>
+                <div className="profile-fields">
+                  <span className={person.ipi ? "field-chip complete" : "field-chip missing"}>
+                    IPI/CAE {person.ipi || "missing"}
+                  </span>
+                  <span className={person.publisher ? "field-chip complete" : "field-chip missing"}>
+                    {person.publisher || "publisher missing"}
+                  </span>
+                </div>
               </div>
               <div className="split-pill">{person.split}%</div>
-              {person.status === "confirmed" ? (
-                <span className="status confirmed"><BadgeCheck size={15} /> Confirmed</span>
+              {person.status === "confirmed" && hasRegistrationProfile(person) ? (
+                <span className="status confirmed"><BadgeCheck size={15} /> Ready</span>
               ) : (
                 <button className="status pending" onClick={() => confirmPerson(index)}>
-                  Confirm
+                  Mark ready
                 </button>
               )}
             </article>
@@ -241,16 +314,16 @@ function App() {
 
       <section className="ledger-section" id="ledger">
         <div className="section-heading">
-          <span>Transparent ledger</span>
-          <h2>Every important move is visible</h2>
+          <span>Registration ledger</span>
+          <h2>Every invite, profile update, and split approval is visible</h2>
         </div>
         <div className="ledger">
           {[...ledgerBase, {
             time: "Now",
-            event: allConfirmed ? "Record approved" : "Approval pending",
-            detail: allConfirmed
-              ? "All collaborators confirmed the current session credits"
-              : "Waiting on remaining collaborators to approve the record"
+            event: registrationReady ? "PRO packet ready" : "Registration blocked",
+            detail: registrationReady
+              ? "Sync can generate a BMI/ASCAP-ready work registration packet"
+              : "Sync is still waiting on missing rights profile fields or approvals"
           }].map((item) => (
             <div className="ledger-row" key={`${item.time}-${item.event}`}>
               <time>{item.time}</time>
@@ -265,21 +338,34 @@ function App() {
 
       <section className="export-band">
         <div>
-          <span className="tiny-label">Output packet</span>
-          <h2>Ready for distributors, PROs, labels, and lawyers.</h2>
+          <span className="tiny-label">Registration packet</span>
+          <h2>One clean handoff for BMI, ASCAP, publishing admins, and collaborators.</h2>
         </div>
         <div className="export-actions">
-          <button><WalletCards size={18} /> Split sheet</button>
-          <button><Music2 size={18} /> Metadata</button>
-          <button><FileDown size={18} /> Export PDF</button>
+          <button><WalletCards size={18} /> Writer shares</button>
+          <button><Music2 size={18} /> Work metadata</button>
+          <button><FileDown size={18} /> PRO packet</button>
         </div>
       </section>
 
       <footer>
         <Sparkles size={16} />
-        Built as a Sync concept demo: tap-in registration, no paperwork drag, full ledger visibility.
+        Built as a Sync concept demo: invited registration rooms for cleaner BMI and ASCAP song registrations.
       </footer>
     </main>
+  );
+}
+
+function hasRegistrationProfile(person) {
+  return Boolean(person.pro && person.pro !== "Choose PRO" && person.ipi && person.publisher);
+}
+
+function StatusStep({ done, label }) {
+  return (
+    <div className={done ? "status-step done" : "status-step"}>
+      <span>{done ? <BadgeCheck size={15} /> : "!"}</span>
+      {label}
+    </div>
   );
 }
 

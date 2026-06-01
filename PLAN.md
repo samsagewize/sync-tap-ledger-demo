@@ -2,25 +2,26 @@
 
 ## Product Promise
 
-Sync lets musicians register session credits in the room. A creator starts a record, collaborators tap in with phones, agree to roles and splits, and everyone leaves with a shared transparent ledger.
+Sync helps musicians prepare BMI/ASCAP song registration without the usual collaborator chase. A creator opens a registration room, invites every writer by QR/NFC/link, each collaborator installs the app and completes their rights profile, and the room produces one transparent registration-ready packet.
 
 ## MVP Scope
 
 - Create a recording session with title, artist, location, and date.
 - Installable phone app experience through PWA first, with native wrappers later if needed.
 - Tap-in flow for collaborators using NFC, QR fallback, or invite link.
-- Contributor profile: legal name, public artist name, role, wallet/payment handle, PRO/IPI details.
+- Contributor profile: legal name, public artist name, role, PRO affiliation, IPI/CAE, publisher name, publisher IPI, and contact details.
 - Split confirmation with lightweight approval from every contributor.
+- Readiness checks for missing writer, publisher, share, and approval fields.
 - Immutable event ledger showing who joined, what changed, and when.
-- Export package for labels, distributors, PROs, publishers, and lawyers.
+- Export packet for BMI/ASCAP registration, publishing admins, labels, distributors, and lawyers.
 
 ## Demo Flow
 
-1. Open a session called "Midnight Signal."
-2. Show four phones tapping in and becoming contributors.
-3. Adjust splits and roles.
-4. Confirm the record.
-5. Display the transparent ledger and export-ready summary.
+1. Open a registration room called "Midnight Signal."
+2. Show four phones joining through QR/NFC/app install.
+3. Collect each writer's PRO, IPI/CAE, publisher, and split.
+4. Flag missing registration fields before submission.
+5. Display the transparent ledger and BMI/ASCAP-ready packet summary.
 
 ## Launch Path
 

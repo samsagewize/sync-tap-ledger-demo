@@ -1,7 +1,7 @@
 {
   "name": "Sync",
   "short_name": "Sync",
-  "description": "Tap-to-register session credits, splits, approvals, and transparent record ledgers for musicians.",
+  "description": "Invited registration rooms for collecting writer, PRO, IPI/CAE, publisher, split, and approval details before BMI/ASCAP registration.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
