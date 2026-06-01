@@ -386,6 +386,46 @@ footer {
   margin-bottom: 22px;
 }
 
+.onboarding-flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 22px;
+}
+
+.flow-card {
+  min-height: 164px;
+  padding: 16px;
+  border: 1px solid rgba(21, 37, 28, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.flow-card h3 {
+  margin: 8px 0 8px;
+  font-size: 1.02rem;
+  line-height: 1.18;
+}
+
+.flow-card p {
+  margin: 0;
+  color: #59655e;
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
+.flow-card.is-ready {
+  background: #e7f5de;
+}
+
+.flow-card.needs-help {
+  background: #fff0e8;
+}
+
+.flow-card.is-close {
+  background: #edf3e9;
+}
+
 .status-step {
   min-height: 58px;
   display: flex;
@@ -555,6 +595,11 @@ footer {
   color: #9b2f28;
 }
 
+.field-chip.setup {
+  background: #15251c;
+  color: #f7ffe3;
+}
+
 .split-pill {
   min-width: 58px;
   min-height: 36px;
@@ -658,6 +703,7 @@ footer {
   .metric-band,
   .session-grid,
   .registration-checklist,
+  .onboarding-flow,
   .contributor-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -696,6 +742,7 @@ footer {
   .metric-band,
   .session-grid,
   .registration-checklist,
+  .onboarding-flow,
   .contributor-grid,
   .qr-panel {
     grid-template-columns: 1fr;

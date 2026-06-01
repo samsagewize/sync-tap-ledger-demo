@@ -1,7 +1,7 @@
 {
   "name": "Sync",
   "short_name": "Sync",
-  "description": "Invited registration rooms for collecting writer, PRO, IPI/CAE, publisher, split, and approval details before BMI/ASCAP registration.",
+  "description": "Invited registration rooms for collecting PRO status, rights profiles, split percentages, approvals, and transparent song paperwork.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",

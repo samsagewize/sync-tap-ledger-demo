@@ -1,4 +1,4 @@
-const CACHE_NAME = "sync-demo-v1";
+const CACHE_NAME = "sync-demo-v2";
 const APP_SHELL = [
   "/",
   "/index.html",

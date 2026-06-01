@@ -2,13 +2,15 @@
 
 ## Product Promise
 
-Sync helps musicians prepare BMI/ASCAP song registration without the usual collaborator chase. A creator opens a registration room, invites every writer by QR/NFC/link, each collaborator installs the app and completes their rights profile, and the room produces one transparent registration-ready packet.
+Sync helps musicians prepare song registration and split paperwork without the usual collaborator chase. A creator opens a registration room, invites every writer by QR/NFC/link, each collaborator installs the app, answers whether they already have a PRO, completes their rights profile or starts a guided PRO setup path, and the room closes with one transparent registration-ready packet.
 
 ## MVP Scope
 
 - Create a recording session with title, artist, location, and date.
 - Installable phone app experience through PWA first, with native wrappers later if needed.
 - Tap-in flow for collaborators using NFC, QR fallback, or invite link.
+- Entry gate that asks whether each collaborator already belongs to a PRO.
+- Guided setup path for collaborators who do not yet have a PRO, while still collecting song and split data.
 - Contributor profile: legal name, public artist name, role, PRO affiliation, IPI/CAE, publisher name, publisher IPI, and contact details.
 - Split confirmation with lightweight approval from every contributor.
 - Readiness checks for missing writer, publisher, share, and approval fields.
@@ -19,9 +21,9 @@ Sync helps musicians prepare BMI/ASCAP song registration without the usual colla
 
 1. Open a registration room called "Midnight Signal."
 2. Show four phones joining through QR/NFC/app install.
-3. Collect each writer's PRO, IPI/CAE, publisher, and split.
-4. Flag missing registration fields before submission.
-5. Display the transparent ledger and BMI/ASCAP-ready packet summary.
+3. Ask each collaborator whether they already have a PRO.
+4. Collect PRO, IPI/CAE, publisher, contact, and split details, or start the PRO setup checklist.
+5. Tap to approve percentages, close the room, and display the transparent ledger plus registration packet.
 
 ## Launch Path
 

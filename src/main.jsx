@@ -26,6 +26,7 @@ const initialContributors = [
     split: 35,
     status: "confirmed",
     device: "iPhone 15",
+    proStatus: "member",
     pro: "BMI",
     ipi: "00342190872",
     publisher: "Sage Signal Music",
@@ -37,6 +38,7 @@ const initialContributors = [
     split: 25,
     status: "confirmed",
     device: "Pixel 9",
+    proStatus: "member",
     pro: "ASCAP",
     ipi: "00630218841",
     publisher: "Self-published",
@@ -48,6 +50,7 @@ const initialContributors = [
     split: 25,
     status: "pending",
     device: "Galaxy S25",
+    proStatus: "member",
     pro: "BMI",
     ipi: "",
     publisher: "",
@@ -59,6 +62,7 @@ const initialContributors = [
     split: 15,
     status: "confirmed",
     device: "iPhone 14",
+    proStatus: "member",
     pro: "ASCAP",
     ipi: "00491822016",
     publisher: "Vale Room Admin",
@@ -91,6 +95,7 @@ function App() {
     [contributors]
   );
   const missingProfiles = contributors.length - completedProfiles;
+  const proSetupCount = contributors.filter((person) => person.proStatus === "setup").length;
   const allConfirmed = contributors.every((person) => person.status === "confirmed");
   const registrationReady = totalSplit === 100 && allConfirmed && missingProfiles === 0;
 
@@ -129,7 +134,8 @@ function App() {
       split: 0,
       status: "pending",
       device: tapCount % 2 ? "iPhone" : "Android",
-      pro: "Choose PRO",
+      proStatus: tapCount % 2 ? "setup" : "member",
+      pro: tapCount % 2 ? "Needs PRO setup" : "Choose PRO",
       ipi: "",
       publisher: "",
       publisherIpi: ""
@@ -145,8 +151,9 @@ function App() {
           ? {
               ...person,
               status: "confirmed",
+              proStatus: person.proStatus === "setup" ? "setup" : "member",
               pro: person.pro === "Choose PRO" ? "BMI" : person.pro,
-              ipi: person.ipi || "Needs real IPI",
+              ipi: person.ipi || (person.proStatus === "setup" ? "Pending after PRO setup" : "Needs real IPI"),
               publisher: person.publisher || "Needs publisher choice"
             }
           : person
@@ -183,11 +190,11 @@ function App() {
             <span><Nfc size={18} /></span>
             Sync
           </div>
-          <h1>Tap into the room. Leave ready to register with BMI or ASCAP.</h1>
+          <h1>Tap phones, settle splits, make music paperwork painless.</h1>
           <p>
-            Sync turns the messy song-registration chase into a shared app room. Invite every
-            writer, collect PRO details, verify IPI/CAE and publisher info, approve splits, then
-            hand off a clean registration packet.
+            Sync lets every collaborator join a room by phone, add their PRO info or start a
+            guided PRO setup, agree on percentages, and close the record with a transparent
+            registration packet.
           </p>
           <div className="hero-actions">
             <a href="#demo" className="primary-action"><Smartphone size={18} /> Try room flow</a>
@@ -211,7 +218,7 @@ function App() {
               <div className="mini-ledger">
                 <span><BadgeCheck size={14} /> {completedProfiles} profiles ready</span>
                 <span><UsersRound size={14} /> {contributors.length} writers invited</span>
-                <span><ShieldCheck size={14} /> {missingProfiles} missing profiles</span>
+                <span><ShieldCheck size={14} /> {proSetupCount} need PRO help</span>
               </div>
             </div>
           </div>
@@ -222,7 +229,7 @@ function App() {
         <Metric icon={<Fingerprint />} label="Invite room" value="QR + app install" />
         <Metric icon={<WalletCards />} label="Rights profiles" value={`${completedProfiles}/${contributors.length} complete`} />
         <Metric icon={<CircleDollarSign />} label="Splits tracked" value={`${totalSplit}% allocated`} />
-        <Metric icon={<FileDown />} label="PRO packet" value={registrationReady ? "Ready" : "Needs review"} />
+        <Metric icon={<ShieldCheck />} label="PRO setup" value={proSetupCount ? `${proSetupCount} guided` : "All affiliated"} />
       </section>
 
       <section className="workspace" id="demo">
@@ -239,9 +246,26 @@ function App() {
           </div>
           <div className="registration-checklist" aria-label="Registration readiness">
             <StatusStep done label="Song title and artist" />
+            <StatusStep done={proSetupCount === 0} label="PRO affiliation or setup path" />
             <StatusStep done={totalSplit === 100} label="Writer shares total 100%" />
             <StatusStep done={missingProfiles === 0} label="IPI/CAE and publisher info" />
-            <StatusStep done={allConfirmed} label="All contributors approved" />
+          </div>
+          <div className="onboarding-flow" aria-label="Before entering the room">
+            <div className="flow-card is-ready">
+              <span className="tiny-label">Already with a PRO</span>
+              <h3>Enter BMI, ASCAP, SESAC, or other society details</h3>
+              <p>Legal name, writer name, IPI/CAE, publisher, publisher IPI, contact, and payout/admin notes.</p>
+            </div>
+            <div className="flow-card needs-help">
+              <span className="tiny-label">No PRO yet</span>
+              <h3>Start a guided setup while the room keeps collecting data</h3>
+              <p>Sync can prepare the checklist, capture the song info now, and flag what must be completed before submission.</p>
+            </div>
+            <div className="flow-card is-close">
+              <span className="tiny-label">Close the room</span>
+              <h3>Tap approval, lock percentages, leave the paper trail</h3>
+              <p>Everyone sees the same split sheet, profile status, ledger, and registration-ready export.</p>
+            </div>
           </div>
           <div className="tap-console">
             <div>
@@ -271,8 +295,8 @@ function App() {
           </div>
           <div>
             <span className="tiny-label">Room invite</span>
-            <h2>Scan, install, fill your rights profile</h2>
-            <p>Each writer lands in the same room and adds legal name, PRO, IPI/CAE, publisher info, and approved split.</p>
+            <h2>Scan, install, answer the PRO question</h2>
+            <p>If you have a PRO, add your details. If you do not, Sync starts the setup path and keeps collecting the record data.</p>
             <button className="text-button"><Link size={17} /> Copy room link</button>
           </div>
         </div>
@@ -291,6 +315,9 @@ function App() {
                 <h3>{person.name}</h3>
                 <p>{person.role} · {person.pro} · {person.device}</p>
                 <div className="profile-fields">
+                  <span className={person.proStatus === "setup" ? "field-chip setup" : "field-chip complete"}>
+                    {person.proStatus === "setup" ? "PRO setup needed" : "PRO linked"}
+                  </span>
                   <span className={person.ipi ? "field-chip complete" : "field-chip missing"}>
                     IPI/CAE {person.ipi || "missing"}
                   </span>
@@ -320,10 +347,10 @@ function App() {
         <div className="ledger">
           {[...ledgerBase, {
             time: "Now",
-            event: registrationReady ? "PRO packet ready" : "Registration blocked",
+            event: registrationReady ? "Room closed" : "Room still open",
             detail: registrationReady
-              ? "Sync can generate a BMI/ASCAP-ready work registration packet"
-              : "Sync is still waiting on missing rights profile fields or approvals"
+              ? "All contributors tapped approval and Sync can generate the registration packet"
+              : "Sync is still waiting on PRO setup, missing profile fields, or approvals"
           }].map((item) => (
             <div className="ledger-row" key={`${item.time}-${item.event}`}>
               <time>{item.time}</time>
@@ -339,7 +366,7 @@ function App() {
       <section className="export-band">
         <div>
           <span className="tiny-label">Registration packet</span>
-          <h2>One clean handoff for BMI, ASCAP, publishing admins, and collaborators.</h2>
+          <h2>One clean handoff for PRO registration, split sheets, publishing admins, and collaborators.</h2>
         </div>
         <div className="export-actions">
           <button><WalletCards size={18} /> Writer shares</button>
@@ -350,14 +377,20 @@ function App() {
 
       <footer>
         <Sparkles size={16} />
-        Built as a Sync concept demo: invited registration rooms for cleaner BMI and ASCAP song registrations.
+        Built as a Sync concept demo: tap-in registration rooms for easier music paperwork.
       </footer>
     </main>
   );
 }
 
 function hasRegistrationProfile(person) {
-  return Boolean(person.pro && person.pro !== "Choose PRO" && person.ipi && person.publisher);
+  return Boolean(
+    person.proStatus === "member" &&
+      person.pro &&
+      person.pro !== "Choose PRO" &&
+      person.ipi &&
+      person.publisher
+  );
 }
 
 function StatusStep({ done, label }) {
